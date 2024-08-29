@@ -40,12 +40,5 @@
         android:textSize="10pt"
         android:layout_marginTop="40dp"/>
 
-        <Button
-            android:id="@+id/bt1"
-            android:layout_width="100dp"
-            android:layout_height="50dp"
-            android:text="Asda"
-            android:layout_marginTop="270pt"/>
-
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

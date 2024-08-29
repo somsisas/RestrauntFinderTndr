@@ -1,14 +1,17 @@
 package com.example.myapplication;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MyModel {
     private String name;
     private int description;
-    private String imageUrl;
+    private ArrayList<String> imageUrls;
 
-    public MyModel(String name, int description, String imageUrl) {
+    public MyModel(String name, int description, ArrayList<String> imageUrls) {
         this.name = name;
         this.description = description;
-        this.imageUrl = imageUrl;
+        this.imageUrls = imageUrls;
     }
 
     public String getName() {
@@ -19,9 +22,7 @@ public class MyModel {
         return description;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public List<String> getImageUrls() {
+        return imageUrls;
     }
-
-
 }

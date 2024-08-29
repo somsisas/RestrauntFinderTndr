@@ -42,21 +42,37 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
         TextView nameTextView;
         TextView ageTextView;
         ImageView profileImageView;
+        int currentImageIndex = 0;
 
         ViewHolder(View itemView) {
             super(itemView);
             nameTextView = itemView.findViewById(R.id.nameTextView);
             ageTextView = itemView.findViewById(R.id.ageTextView);
             profileImageView = itemView.findViewById(R.id.profileImageView);
+
+
+            profileImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    currentImageIndex++;
+                    if (currentImageIndex >= items.get(getAdapterPosition()).getImageUrls().size()) {
+                        currentImageIndex = 0; // reset to first image
+                    }
+                    loadImage(items.get(getAdapterPosition()).getImageUrls().get(currentImageIndex));
+                }
+            });
         }
 
         void bind(MyModel item) {
             nameTextView.setText(item.getName());
             ageTextView.setText(String.valueOf(item.getDescription()));
-            // Load image using a library like Glide or Picasso
+            currentImageIndex = 0; // Reset to the first image on new bind
+            loadImage(item.getImageUrls().get(currentImageIndex));
+        }
+
+        void loadImage(String url) {
             Glide.with(profileImageView.getContext())
-                    .load(item.getImageUrl())
-                    .error(R.drawable.ic_launcher_background) // Optional error image
+                    .load(url)
                     .into(profileImageView);
         }
     }
