@@ -217,7 +217,6 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 //        System.out.println("Asda " + userLatitude + userLongitude);
-        //new getRestrauntInfo().execute("https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=restraunt&location=32.88156181108086%2C-117.23314332318097&radius=1500&type=restaurant&key=AIzaSyCZmjKrhNqC47ZeCEonIsOUiceAi9wDT7Y");
 
     }
 
@@ -266,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
 //        userLatitude = String.valueOf(25.7617);
 //        userLongitude = String.valueOf(-80.1918);
 
-        new getRestrauntInfo().execute("https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=restraunt&location=" + userLatitude + "%2C" + userLongitude + "&radius=5000&type=restaurant&opennow=true&key=AIzaSyCZmjKrhNqC47ZeCEonIsOUiceAi9wDT7Y");
+        new getRestrauntInfo().execute("https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=restraunt&location=" + userLatitude + "%2C" + userLongitude + "&radius=5000&type=restaurant&opennow=true&key=YOUR_KEY");
 
     }
 
@@ -372,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
                         if (jsonObject.has("next_page_token")) {
                             System.out.println("have next page");
                             String nextPagetok = jsonObject.getString("next_page_token");
-                            token = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken=" + nextPagetok + "&key=AIzaSyCZmjKrhNqC47ZeCEonIsOUiceAi9wDT7Y";
+                            token = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken=" + nextPagetok + "&key=YOUR_KEY";
 
                             Thread.sleep(2000);
                         }
@@ -397,7 +396,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                             // Second API call to get details including photos
-                            String placeUrl = "https://maps.googleapis.com/maps/api/place/details/json?fields=name%2Cphotos&place_id=" + placeId + "&key=AIzaSyCZmjKrhNqC47ZeCEonIsOUiceAi9wDT7Y";
+                            String placeUrl = "https://maps.googleapis.com/maps/api/place/details/json?fields=name%2Cphotos&place_id=" + placeId + "&key=YOUR_KEY";
                             URL placeDetailUrl = new URL(placeUrl);
                             HttpURLConnection placeConnection = (HttpURLConnection) placeDetailUrl.openConnection();
                             placeConnection.setRequestMethod("GET");
@@ -424,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
                                             + "?maxwidth=500"
                                             + "&maxheight=500"
                                             + "&photoreference=" + photoReference
-                                            + "&key=AIzaSyCZmjKrhNqC47ZeCEonIsOUiceAi9wDT7Y";
+                                            + "&key=YOUR_KEY";
                                     photoUrls.add(photoUrl);
                                 }
 
@@ -463,7 +462,7 @@ public class MainActivity extends AppCompatActivity {
             bt1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new getRestrauntInfo().execute("https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=restraunt&location=" + userLatitude + "%2C" + userLongitude + "&radius=" + intoMs + "&type=restaurant&opennow=true&key=AIzaSyCZmjKrhNqC47ZeCEonIsOUiceAi9wDT7Y");
+                    new getRestrauntInfo().execute("https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=restraunt&location=" + userLatitude + "%2C" + userLongitude + "&radius=" + intoMs + "&type=restaurant&opennow=true&key=YOUR_KEY");
                 }
             });
 
