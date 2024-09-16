@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
+import java.util.Map;
 
 public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.ViewHolder> {
 
@@ -38,6 +39,10 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
         return items.size();
     }
 
+    public List<MyModel> getItems() {
+        return items;
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView;
         TextView ageTextView;
@@ -47,7 +52,7 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
         ViewHolder(View itemView) {
             super(itemView);
             nameTextView = itemView.findViewById(R.id.nameTextView);
-            ageTextView = itemView.findViewById(R.id.ageTextView);
+//            ageTextView = itemView.findViewById(R.id.ageTextView);
             profileImageView = itemView.findViewById(R.id.profileImageView);
 
 
@@ -65,7 +70,7 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
 
         void bind(MyModel item) {
             nameTextView.setText(item.getName());
-            ageTextView.setText(String.valueOf(item.getDescription()));
+//            ageTextView.setText(String.valueOf(item.getLatitude()));
             currentImageIndex = 0; // Reset to the first image on new bind
             loadImage(item.getImageUrls().get(currentImageIndex));
         }
@@ -75,6 +80,7 @@ public class CardStackAdapter extends RecyclerView.Adapter<CardStackAdapter.View
                     .load(url)
                     .into(profileImageView);
         }
+
     }
 }
 

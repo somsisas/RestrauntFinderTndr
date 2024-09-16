@@ -4,6 +4,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -18,10 +19,17 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.slider.Slider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
 import com.yuyakaido.android.cardstackview.CardStackView;
 
@@ -30,6 +38,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -53,6 +62,7 @@ import com.yuyakaido.android.cardstackview.SwipeableMethod;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -77,6 +87,14 @@ public class MainActivity extends AppCompatActivity {
     private String userLatitude;
     private String userLongitude;
 
+    private String curResId;
+
+    private String curResName;
+
+
+
+    private CardStackView globalCardView;
+
     private List<MyModel> restraunts = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         manager = new CardStackLayoutManager(this, new CardStackListener() {
             @Override
             public void onCardDragging(Direction direction, float ratio) {
-                System.out.println("here" + manager.getTopPosition());
+//                System.out.println("here" + manager.getTopPosition());
                 if (manager.getTopPosition() == adapter.getItemCount() - 1) {
                     System.out.println("here mate");
                     showEndOfProfilesMessage();
@@ -100,7 +118,26 @@ public class MainActivity extends AppCompatActivity {
             public void onCardSwiped(Direction direction) {
                 // Handle swipe
                 if (direction == Direction.Right) {
-                    System.out.println("asda");
+                    int pos = manager.getTopPosition()-1;
+                    MyModel currentItem = adapter.getItems().get(pos);
+
+                    System.out.println("asdaLass " + currentItem.getName() + currentItem.getLatitude());
+
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null) {
+                        String uid = user.getUid();
+                        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(uid);
+
+                        // Example restaurant data
+                        String restaurantId = currentItem.getId();
+                        Map<String, String> restaurantData = new HashMap<>();
+                        restaurantData.put("name", currentItem.getName());
+                        restaurantData.put("latitude", String.valueOf(currentItem.getLatitude()));
+                        restaurantData.put("longitude", String.valueOf(currentItem.getLongitude()));
+
+                        userRef.child("liked_restaurants").child(restaurantId).setValue(restaurantData);
+                    }
+
                 } else if (direction == Direction.Left) {
                     // Handle left swipe
                 }
@@ -144,21 +181,11 @@ public class MainActivity extends AppCompatActivity {
         cardStackView.setLayoutManager(manager);
         cardStackView.setItemAnimator(new DefaultItemAnimator());
 
-        // Prepare and set the adapter
+        globalCardView = cardStackView;
 
-        adapter = new CardStackAdapter(addItems());
-        cardStackView.setAdapter(adapter);
-        Button bt1 = findViewById(R.id.swipeButton);
-        bt1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (manager.getTopPosition() == adapter.getItemCount() - 1) {
-                    System.out.println("here mate");
-                    showEndOfProfilesMessage();
-                }
-                cardStackView.swipe();
-            }
-        });
+        // Prepare and set the adapter
+//        addItems();
+
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -172,6 +199,23 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setSelectedItemId(R.id.bottom_home);
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+
+            if(itemId == R.id.bottom_home){
+                return true;
+            }
+            else if(itemId == R.id.bottom_place) {
+                startActivity(new Intent(getApplicationContext(), LikedRestraunts.class));
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                finish();
+                return true;
+            }
+            return false;
+        });
 //        System.out.println("Asda " + userLatitude + userLongitude);
         //new getRestrauntInfo().execute("https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=restraunt&location=32.88156181108086%2C-117.23314332318097&radius=1500&type=restaurant&key=AIzaSyCZmjKrhNqC47ZeCEonIsOUiceAi9wDT7Y");
 
@@ -209,44 +253,7 @@ public class MainActivity extends AppCompatActivity {
 //        return curLat[0] + "@" + curLong[0];
     }
 
-//    private void requestNewLocationData() {
-//        LocationRequest locationRequest = LocationRequest.create();
-//        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-//        locationRequest.setInterval(10000); // 10 seconds
-//        locationRequest.setFastestInterval(5000); // 5 seconds
-//
-//        locationCallback = new LocationCallback() {
-//            @Override
-//            public void onLocationResult(LocationResult locationResult) {
-//                if (locationResult == null) {
-//                    return;
-//                }
-//                for (Location location : locationResult.getLocations()) {
-//                    // Update your UI with the new location data
-//                    double latitude = location.getLatitude();
-//                    double longitude = location.getLongitude();
-//                    userLatitude = String.valueOf(latitude);
-//                    userLongitude = String.valueOf(longitude);
-//
-//                    System.out.println("Location " + "Latamata: " + latitude + ", Long: " + longitude);
-//
-//                    useLocationData();
-//                }
-//            }
-//        };
-//
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return;
-//        }
-//        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
-//    }
+
 
     private void useLocationData() {
         // This method is called once the location data is available
@@ -256,8 +263,10 @@ public class MainActivity extends AppCompatActivity {
 
         // You can now safely use userLatitude and userLongitude here
         // For example, initiate your network request here:
+//        userLatitude = String.valueOf(25.7617);
+//        userLongitude = String.valueOf(-80.1918);
 
-        new getRestrauntInfo().execute("https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=restraunt&location=" + userLatitude + "%2C" + userLongitude + "&radius=30500&type=restaurant&opennow=true&key=AIzaSyCZmjKrhNqC47ZeCEonIsOUiceAi9wDT7Y");
+        new getRestrauntInfo().execute("https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=restraunt&location=" + userLatitude + "%2C" + userLongitude + "&radius=5000&type=restaurant&opennow=true&key=AIzaSyCZmjKrhNqC47ZeCEonIsOUiceAi9wDT7Y");
 
     }
 
@@ -287,6 +296,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<MyModel> addItems() {
 
+//        System.out.println("In here ");
         ArrayList<String> l1 = new ArrayList<>();
         ArrayList<String> l2 = new ArrayList<>();
         ArrayList<String> l3 = new ArrayList<>();
@@ -301,9 +311,9 @@ public class MainActivity extends AppCompatActivity {
 
         List<MyModel> items = new ArrayList<>();
 
-        items.add(new MyModel("Alice", 25, l1));
-        items.add(new MyModel("Bob", 30, l2));
-        items.add(new MyModel("Charlie", 28, l3));
+        restraunts.add(new MyModel("Alice", "Alice", 123.09121, 123.120912, l1));
+        restraunts.add(new MyModel("Bob", "Bob", 123.012, 789.1298312, l2));
+        restraunts.add(new MyModel("Charlie", "Charlie", 123.12312, 456.1232981, l3));
         // Add more items here
         return items;
     }
@@ -319,81 +329,147 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    private static class getRestrauntInfo extends AsyncTask<String, Void, String> {
+    private class getRestrauntInfo extends AsyncTask<String, Void, List<MyModel>> {
         @Override
-        protected String doInBackground(String... urls) {
+        protected List<MyModel> doInBackground(String... urls) {
+
+            List<MyModel> restaurantList = new ArrayList<>();
+            boolean flag = true;
+            String token = urls[0];
+
             try {
-                // Create a URL object from the passed URL string
-                URL url = new URL(urls[0]);
+                while(flag) {
 
-                // Open a connection to the URL
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
-                // Set the request method (GET, POST, etc.)
-                urlConnection.setRequestMethod("GET");
+                    // Create a URL object from the passed URL string
+                    URL url = new URL(token);
 
-                // Get the response code
-                int responseCode = urlConnection.getResponseCode();
+                    // Open a connection to the URL
+                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
-                if (responseCode == HttpURLConnection.HTTP_OK) { // 200 OK
-                    // Read the response from the input stream
-                    BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    String inputLine;
-                    StringBuilder content = new StringBuilder();
+                    // Set the request method (GET, POST, etc.)
+                    urlConnection.setRequestMethod("GET");
 
-                    while ((inputLine = in.readLine()) != null) {
-                        content.append(inputLine);
+                    // Get the response code
+                    int responseCode = urlConnection.getResponseCode();
+
+                    if (responseCode == HttpURLConnection.HTTP_OK) { // 200 OK
+                        // Read the response from the input stream
+                        BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        String inputLine;
+                        StringBuilder content = new StringBuilder();
+
+                        while ((inputLine = in.readLine()) != null) {
+                            content.append(inputLine);
+                        }
+
+                        // Close the input stream
+                        in.close();
+
+                        JSONObject jsonObject = new JSONObject(content.toString());
+                        JSONArray resultsArray = jsonObject.getJSONArray("results");
+
+                        if (jsonObject.has("next_page_token")) {
+                            System.out.println("have next page");
+                            String nextPagetok = jsonObject.getString("next_page_token");
+                            token = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken=" + nextPagetok + "&key=AIzaSyCZmjKrhNqC47ZeCEonIsOUiceAi9wDT7Y";
+
+                            Thread.sleep(2000);
+                        }
+                        else{
+                            System.out.println("no next page");
+                             flag = false;
+                        }
+
+
+//                    System.out.println(resultsArray);
+
+
+                        for (int i = 0; i < resultsArray.length(); i++) {
+                            JSONObject resultObject = resultsArray.getJSONObject(i);
+                            String name = resultObject.getString("name");
+                            String placeId = resultObject.getString("place_id");
+                            JSONObject curGeo = resultObject.getJSONObject("geometry");
+                            JSONObject curLatLng = curGeo.getJSONObject("location");
+                            Double curLatitude = curLatLng.getDouble("lat");
+                            Double curLongitude = curLatLng.getDouble("lng");
+//                        System.out.println("Details ! "+ curLatitude + curLongitude);
+
+
+                            // Second API call to get details including photos
+                            String placeUrl = "https://maps.googleapis.com/maps/api/place/details/json?fields=name%2Cphotos&place_id=" + placeId + "&key=AIzaSyCZmjKrhNqC47ZeCEonIsOUiceAi9wDT7Y";
+                            URL placeDetailUrl = new URL(placeUrl);
+                            HttpURLConnection placeConnection = (HttpURLConnection) placeDetailUrl.openConnection();
+                            placeConnection.setRequestMethod("GET");
+                            int placeResponseCode = placeConnection.getResponseCode();
+
+                            if (placeResponseCode == HttpURLConnection.HTTP_OK) {
+                                BufferedReader placeIn = new BufferedReader(new InputStreamReader(placeConnection.getInputStream()));
+                                StringBuilder placeContent = new StringBuilder();
+                                String placeInputLine;
+
+                                while ((placeInputLine = placeIn.readLine()) != null) {
+                                    placeContent.append(placeInputLine);
+                                }
+                                placeIn.close();
+
+                                JSONObject placeJsonObject = new JSONObject(placeContent.toString());
+                                JSONObject result = placeJsonObject.getJSONObject("result");
+                                JSONArray photos = result.getJSONArray("photos");
+
+                                ArrayList<String> photoUrls = new ArrayList<>();
+                                for (int j = 0; j < photos.length(); j++) {
+                                    String photoReference = photos.getJSONObject(j).getString("photo_reference");
+                                    String photoUrl = "https://maps.googleapis.com/maps/api/place/photo"
+                                            + "?maxwidth=500"
+                                            + "&maxheight=500"
+                                            + "&photoreference=" + photoReference
+                                            + "&key=AIzaSyCZmjKrhNqC47ZeCEonIsOUiceAi9wDT7Y";
+                                    photoUrls.add(photoUrl);
+                                }
+
+                                restaurantList.add(new MyModel(placeId, name, curLatitude, curLongitude, photoUrls));
+//                            System.out.println(restaurantList);
+                            }
+                        }
+
                     }
-
-                    // Close the input stream
-                    in.close();
-
-                    // Return the response content as a String
-                    return content.toString();
-                } else {
-                    // Handle non-200 HTTP responses
-                    return "Error: " + responseCode;
                 }
+//                else {
+//                    // Handle non-200 HTTP responses
+//                }
             } catch (Exception e) {
                 e.printStackTrace();
-                return "Exception: " + e.getMessage();
             }
+            return restaurantList;
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            // Handle the result of the network request here (e.g., update UI)
+        protected void onPostExecute(List<MyModel> result) {
             super.onPostExecute(result);
-            // For example, you can log the result
-            try {
-                JSONObject jsonObject = new JSONObject(result);
-                System.out.println(jsonObject);
-                if(jsonObject.has("next_page_token")){
-                    System.out.println("you have a next page fam");
+            // Update the restaurant list and notify the adapter
+//            System.out.println(restraunts);
+            restraunts.addAll(result);
+
+//            adapter.notifyDataSetChanged();
+            adapter = new CardStackAdapter(restraunts);
+            globalCardView.setAdapter(adapter);
+            Button bt1 = findViewById(R.id.radBut);
+            Slider sl = findViewById(R.id.radSlider);
+            int val = (int) sl.getValue();
+            int intoMs = val *1000;
+
+
+            bt1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new getRestrauntInfo().execute("https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=restraunt&location=" + userLatitude + "%2C" + userLongitude + "&radius=" + intoMs + "&type=restaurant&opennow=true&key=AIzaSyCZmjKrhNqC47ZeCEonIsOUiceAi9wDT7Y");
                 }
+            });
 
-                JSONArray resultsArray = jsonObject.getJSONArray("results");
-
-
-                for (int i = 0; i < resultsArray.length(); i++) {
-                    JSONObject resultObject = resultsArray.getJSONObject(i);
-
-                    // Get the name and place_id from the resultObject
-                    String name = resultObject.getString("name");
-                    String placeId = resultObject.getString("place_id");
-
-                    // Print or use the extracted data
-                    System.out.println("Place Name: " + name);
-                    System.out.println("Place ID: " + placeId);
-                }
-
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
         }
 
     }
 
 
 }
-

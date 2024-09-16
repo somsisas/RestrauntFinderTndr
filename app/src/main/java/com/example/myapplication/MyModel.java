@@ -4,23 +4,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyModel {
+    private String id;
     private String name;
-    private int description;
+
+    private double latitude;
+
+    private double longitude;
     private ArrayList<String> imageUrls;
 
-    public MyModel(String name, int description, ArrayList<String> imageUrls) {
+    public MyModel(String id, String name, Double latitude, Double longitude, ArrayList<String> imageUrls) {
+        this.id = id;
         this.name = name;
-        this.description = description;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.imageUrls = imageUrls;
     }
+
+    public String getId() { return id; }
 
     public String getName() {
         return name;
     }
 
-    public int getDescription() {
-        return description;
+    public Double getLatitude() {
+        return latitude;
     }
+
+    public Double getLongitude(){return longitude; }
 
     public List<String> getImageUrls() {
         return imageUrls;
