@@ -15,7 +15,6 @@
         android:background="@android:color/white">
 
 
-
     <ImageView
         android:id="@+id/profileImageView"
         android:layout_width="match_parent"
@@ -23,22 +22,16 @@
         android:scaleType="centerCrop"
         android:src="@drawable/lfc"/>
 
-        <TextView
-            android:id="@+id/nameTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Name"
-            android:textSize="10pt"
-            android:textStyle="bold" />
-
-        <TextView
-        android:id="@+id/ageTextView"
+    <TextView
+        android:id="@+id/nameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Age"
-        android:textSize="10pt"
-        android:layout_marginTop="40dp"/>
+        android:layout_marginTop="8dp"
+        android:text="Name"
+        android:textSize="12pt"
+        android:textColor="@color/blueish"
+        android:textStyle="bold" />
+
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

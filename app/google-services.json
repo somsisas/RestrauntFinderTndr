@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "886919852605",
+    "project_id": "trestraunt",
+    "storage_bucket": "trestraunt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:886919852605:android:59ee81ac3812bbd5bcb054",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6KSxfhpM0yUc2EIrlBcDWhyPj8ySBfxE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
