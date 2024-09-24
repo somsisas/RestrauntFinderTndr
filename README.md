@@ -7,7 +7,6 @@
 - **Restaurant Discovery**: Search for nearby restaurants based on the user's location.
 - **Swipe-Based Interface**: Dismiss or like restaurants by swiping left or right, similar to Tinder’s UI.
 - **High-Quality Images**: Display up to 10 photos of each restaurant using Glide.
-- **Restaurant Details**: View details like name, address, and rating.
 - **Like List**: Save restaurants swiped right and view them later on a separate "like list" page.
 - **Seamless Navigation**: Navigate to restaurants via Google Maps with just a tap.
 - **User Authentication**: Sign-up and login functionality using Firebase.
@@ -25,9 +24,8 @@
 ## Project Structure
 
 - **MainActivity**: Entry point for the app, hosting the restaurant swiping feature.
-- **Fragments**: Used for sign-up and login screens, offering a smooth and modern UI.
-  - **LoginFragment**: Handles user login.
-  - **SignUpFragment**: Handles user sign-up.
+- **SignUpActivity*: Handles user sign-up.
+- **LogInActivity**: Handles user login.
 - **Firebase**: Integrated for:
   - **Authentication**: User registration and login.
   - **Database**: Storing the user's "liked" restaurants.
@@ -68,14 +66,7 @@
 
 ## Screenshots
 
-| Main Screen | Like List Screen | Restaurant Details |
+| Main Screen | Like List Screen | Restaurant Details on Maps |
 |-------------|------------------|--------------------|
 | ![Main Screen](screenshots/main.png) | ![Like List](screenshots/like_list.png) | ![Details](screenshots/details.png) |
 
-## Contributing
-
-If you'd like to contribute to the project, feel free to create a fork and submit a pull request with your changes. Contributions are welcome!
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
