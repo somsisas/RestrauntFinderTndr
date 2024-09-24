@@ -68,5 +68,5 @@
 
 | Main Screen | Like List Screen | Restaurant Details on Maps |
 |-------------|------------------|--------------------|
-| ![Main Screen](screenshots/main.png) | ![Like List](screenshots/like_list.png) | ![Details](screenshots/details.png) |
+| ![Main Screen](Screenshots/main.jpg) | ![Like List](Screenshots/liked.jpg) | ![Details](Screenshots/details.jpg) |
 
